@@ -3,10 +3,10 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="se.iths.tictactoe.Controller">
+<AnchorPane fx:id="background" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="600.0" style="-fx-background-color: black;" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="se.iths.tictactoe.Controller">
 
     <children>
-      <GridPane layoutX="128.0" layoutY="263.0" prefHeight="203.0" prefWidth="360.0" AnchorPane.leftAnchor="128.0" AnchorPane.rightAnchor="112.0" AnchorPane.topAnchor="263.0">
+      <GridPane fx:id="board" layoutX="128.0" layoutY="263.0" prefHeight="203.0" prefWidth="360.0" AnchorPane.leftAnchor="128.0" AnchorPane.rightAnchor="112.0" AnchorPane.topAnchor="263.0">
         <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
