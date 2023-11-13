@@ -3,39 +3,52 @@ package se.iths.tictactoe;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
-
-import java.util.Arrays;
 
 public class Model {
+
+    protected boolean isgameEnded = false;
     private final IntegerProperty draws = new SimpleIntegerProperty(0);
     private final IntegerProperty xWins = new SimpleIntegerProperty(0);
     private final IntegerProperty oWins = new SimpleIntegerProperty(0);
 
     private final String[][] gameBoard = new String[3][3];
-    private final Button[][] buttons;
+
     private String currentPlayer = "";
 
 
-    public Model(Button[][] buttons) {
-        this.buttons = buttons;
+    public Model() {
 
         initializeGameBoard();
     }
 
-    public String[][] getGameBoard() {
+   public boolean isgameEnded(){
+        return isgameEnded;
+   }
+   public void setIsgameEnded(boolean ended){
+        isgameEnded = ended;
+   }
+
+
+   public String[][] getGameBoard() {
         return gameBoard;
     }
+
+
     public int getDraws(){
         return draws.get();
     }
+
+
     public IntegerProperty drawsProperty() {
         return draws;
     }
+
+
+
     public void incrementDraws(){
         int currentDraws = getDraws();
         draws.set(currentDraws + 1);
-        System.out.println("Draws incremented. new values: " + (currentDraws + 1));
+
     }
 
     public IntegerProperty xWinsProperty() {
@@ -76,14 +89,20 @@ public class Model {
     }
 
     public void makeMove(int row, int col) {
-        if (gameBoard[row][col].isEmpty() && buttons[row][col].getText().isEmpty()) {
+        if (gameBoard[row][col].isEmpty()) {
             currentPlayer = (currentPlayer.equals("X")) ? "O" : "X";
             gameBoard[row][col] = currentPlayer;
-            buttons[row][col].setText(currentPlayer);
-            buttons[row][col].setDisable(true);
+
+            String winner = checkForWinner();
+            if (winner != null) {
+
+                setIsgameEnded(true);
+            } else if (isBoardFull()) {
+
+                setIsgameEnded(true);
+            }
         }
     }
-
     public String checkForWinner() {
         String winnerX = checkWinnerForPlayer("X");
         String winnerO = checkWinnerForPlayer("O");
@@ -119,7 +138,15 @@ public class Model {
 
         return checkForWinner();
     }
+    public void handleWinner(String winner) {
+        incrementWins(winner);
+        setIsgameEnded(true);
+    }
 
+    public void handleDraw() {
+        incrementDraws();
+        setIsgameEnded(true);
+    }
 
     public boolean isBoardFull() {
         for (int row = 0; row < 3; row++) {
