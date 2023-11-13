@@ -10,7 +10,7 @@ public class Controller {
     @FXML
     private Label draws;
     private Model model;
-    private boolean gameEnded = false;
+  //  private boolean gameEnded = false;
     public TextField scoreBoard;
     @FXML
     private Label xScoreLabel;
@@ -34,8 +34,8 @@ public class Controller {
     private Button button21;
     @FXML
     private Button button22;
-
     private final Button[][] buttons = new Button[3][3];
+    private GameController gameController;
 
     public void setModel(Model model) {
         this.model = model;
@@ -47,8 +47,8 @@ public class Controller {
 
     @FXML
     public void initialize() {
-        model = new Model(buttons);
-        setModel(model);
+        model = new Model();
+       gameController = new GameController(model);
         buttons[0][0] = button00;
         buttons[0][1] = button01;
         buttons[0][2] = button02;
@@ -58,61 +58,46 @@ public class Controller {
         buttons[2][0] = button20;
         buttons[2][1] = button21;
         buttons[2][2] = button22;
+        setModel(model);
     }
 
     @FXML
     public void handleButtonClick(ActionEvent actionEvent) {
-        if (gameEnded) {
-            return;
+    if (gameController != null){
+        Button clickedButton = (Button) actionEvent.getSource();
+            int row = Character.getNumericValue(clickedButton.getId().charAt(6));
+            int col = Character.getNumericValue(clickedButton.getId().charAt(7));
+                gameController.handleMoves(row,col);
+
+                updateGameFx();
+    }
+
+
+    }
+
+    private void updateGameFx(){
+
+        String[][] gameBoard = gameController.model().getGameBoard();
+
+        for (int row = 0; row < gameBoard.length; row++) {
+            for (int col = 0; col < gameBoard[row].length; col++) {
+                buttons[row][col].setText(gameBoard[row][col]);
+                buttons[row][col].setDisable(!gameBoard[row][col].isEmpty());
+            }
         }
 
-        Button clickedButton = (Button) actionEvent.getSource();
-        int row = Character.getNumericValue(clickedButton.getId().charAt(6));
-        int col = Character.getNumericValue(clickedButton.getId().charAt(7));
 
-        model.makeMove(row, col);
-        clickedButton.setText(model.getCurrentPlayer());
-        clickedButton.setDisable(true);
-
-        String winner = model.checkGameResult();
+        String winner = gameController.model().checkForWinner();
+        boolean draws = (winner == null) && gameController.model().isBoardFull();
 
         if (winner != null) {
-           handleWinner(winner);
-
-        } else if (model.isBoardFull()){
-            handleDraw();
-        }else {
-            ComputerPlayer.makeMove(model);
-            String computerWinner = model.checkGameResult();
-
-            if (computerWinner != null) {
-              handleWinner(computerWinner);
-
-            }else if ( model.isBoardFull()) {
-                    handleDraw();
-
-            }
-
+            scoreBoard.setText("Winner: " + winner);
+        }if (draws){
+            scoreBoard.setText("It's a Draw");
         }
     }
 
 
-    private void handleWinner(String winner) {
-        model.incrementWins(winner);
-        scoreBoard.setText(String.format("Winner is: %s", winner));
-        gameEnded = true;
-    }
-    private void handleDraw() {
-        scoreBoard.setText("It's a Draw");
-        model.incrementDraws();
-        gameEnded = true;
-    }
-
-
-
-
-
-    @FXML
     public void handleExitButton() {
         System.exit(0);
     }
@@ -127,10 +112,10 @@ public class Controller {
         }
 
         model.resetGame();
-        gameEnded = false;
+        model.isgameEnded = false;
         scoreBoard.setText("");
     }
-@FXML
+    @FXML
     public void handleRestartAllButton() {
         handleRestartButton();
         model.xWinsProperty().set(0);
@@ -138,6 +123,6 @@ public class Controller {
         model.drawsProperty().set(0);
         model.resetGame();
 
-        gameEnded = false;
+        model.isgameEnded = false;
     }
 }
